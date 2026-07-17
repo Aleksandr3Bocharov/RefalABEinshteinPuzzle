@@ -1,57 +1,51 @@
-* Copyright 2025 Aleksandr Bocharov
-* Distributed under the Boost Software License, Version 1.0.
-* See accompanying file LICENSE_1_0.txt
-* or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-11-14
-* https://github.com/Aleksandr3Bocharov/refalabeinsteinpuzzle
+// Copyright 2026 Aleksandr Bocharov
+// Distributed under the Boost Software License, Version 1.0.
+// See accompanying file LICENSE_1_0.txt
+// or copy at http://www.boost.org/LICENSE_1_0.txt
+// 2026-07-17
+// https://github.com/Aleksandr3Bocharov/refalabeinsteinpuzzle
 
-*====================================================================
-* Модуль "Solver"
-*====================================================================
+//====================================================================
+// Модуль "Solver"
+//====================================================================
 
-Solver +
-    START
+$START Solver;
 
-    ENTRY Answer, Solve
-    ENTRY Steps, Steps_Back, Home
-    ENTRY Color, Yellow, Blue, Red, Green, White
-    ENTRY Nationality, Norwegian, Dane, Englishman, German, Swede
-    ENTRY Cigarettes, Dunhill, Rothmans, PallMall, Marlboro, Winfield
-    ENTRY Pet, Cat, Horse, Bird, Dog, Fish
-    ENTRY Drink, Water, Tea, Milk, Coffee, Beer
-    EXTRN P1, MinW, LengW, Br, Dg
-    EMPTY Impossible, Left, Member, Nextto, Rule_Tables, Rule_Tables_Temp
-    EMPTY Steps, Steps_Back, Home
-    EMPTY Color, Yellow, Blue, Red, Green, White
-    EMPTY Nationality, Norwegian, Dane, Englishman, German, Swede
-    EMPTY Cigarettes, Dunhill, Rothmans, PallMall, Marlboro, Winfield
-    EMPTY Pet, Cat, Horse, Bird, Dog, Fish
-    EMPTY Drink, Water, Tea, Milk, Coffee, Beer
+$ENTRY Answer, Solve;
+$ENTRY Steps, Steps_Back, Home;
+$ENTRY Color, Yellow, Blue, Red, Green, White;
+$ENTRY Nationality, Norwegian, Dane, Englishman, German, Swede;
+$ENTRY Cigarettes, Dunhill, Rothmans, PallMall, Marlboro, Winfield;
+$ENTRY Pet, Cat, Horse, Bird, Dog, Fish;
+$ENTRY Drink, Water, Tea, Milk, Coffee, Beer;
+$EXTERN P1, MinW, LengW, Br, Dg;
+$EMPTY Impossible, Left, Member, Nextto, Rule_Tables, Rule_Tables_Temp;
+$EMPTY Steps, Steps_Back, Home;
+$EMPTY Color, Yellow, Blue, Red, Green, White;
+$EMPTY Nationality, Norwegian, Dane, Englishman, German, Swede;
+$EMPTY Cigarettes, Dunhill, Rothmans, PallMall, Marlboro, Winfield;
+$EMPTY Pet, Cat, Horse, Bird, Dog, Fish;
+$EMPTY Drink, Water, Tea, Milk, Coffee, Beer;
 
-    IMPL
+/*
+    <Answer v.Table> == s.Nationality
 
-* <Answer V.Table> == S.Nationality
-*
-* V.Table ::= (V.Home1) (V.Home2) (V.Home3) (V.Home4) (V.Home5)
-* V.Home1 ::= &Home 1 &Color S.Color &Nationality S.Nationality |
-*             &Cigarettes S.Cigarettes &Pet S.Pet &Drink S.Drink
-* V.Home2 ::= &Home/ 2 &Color S.Color &Nationality S.Nationality |
-*             &Cigarettes S.Cigarettes &Pet S.Pet &Drink S.Drink
-* V.Home3 ::= &Home 3 &Color S.Color &Nationality S.Nationality |
-*             &Cigarettes S.Cigarettes &Pet S.Pet &Drink S.Drink
-* V.Home4 ::= &Home 4 &Color S.Color &Nationality S.Nationality |
-*             &Cigarettes S.Cigarettes &Pet S.Pet &Drink S.Drink
-* V.Home5 ::= &Home 5 &Color S.Color &Nationality S.Nationality |
-*             &Cigarettes S.Cigarettes &Pet S.Pet &Drink S.Drink
-* S.Color ::= &Yellow | &Blue | &Red | &Green | &White
-* S.Nationality ::= &Norwegian | &Dane | &Englishman | &German | &Swede
-* S.Cigarettes ::= &Dunhill | &Rothmans | &PallMall | &Marlboro | &Winfield
-* S.Pet ::= &Cat | &Horse | &Bird | &Dog | &Fish
-* S.Drink ::= &Water | &Tea | &Milk | &Coffee | &Beer
-Answer
-    E.Table_B (E.Home_B &Nationality S.Nationality E.Home_M &Fish E.Home_E) +
-    E.Table_E +
-        = S.Nationality
+    v.Table ::= (v.Home1) (v.Home2) (v.Home3) (v.Home4) (v.Home5)
+    v.Home1 ::= Home 1 Color s.Color Nationality s.Nationality Cigarettes s.Cigarettes Pet s.Pet Drink s.Drink
+    v.Home2 ::= Home 2 Color s.Color Nationality s.Nationality Cigarettes s.Cigarettes Pet s.Pet Drink s.Drink
+    v.Home3 ::= Home 3 Color s.Color Nationality s.Nationality Cigarettes s.Cigarettes Pet s.Pet Drink s.Drink
+    v.Home4 ::= Home 4 Color s.Color Nationality s.Nationality Cigarettes s.Cigarettes Pet s.Pet Drink s.Drink
+    v.Home5 ::= Home 5 Color s.Color Nationality s.Nationality Cigarettes s.Cigarettes Pet s.Pet Drink s.Drink
+    s.Color ::= Yellow | Blue | Red | Green | White
+    s.Nationality ::= Norwegian | Dane | Englishman | German | Swede
+    s.Cigarettes ::= Dunhill | Rothmans | PallMall | Marlboro | Winfield
+    s.Pet ::= Cat | Horse | Bird | Dog | Fish
+    s.Drink ::= Water | Tea | Milk | Coffee | Beer
+*/
+$FUNC Answer
+{
+    e.Table_B (e.Home_B Nationality s.Nationality e.Home_M Fish e.Home_E) e.Table_E = s.Nationality;
+}
 
 * <Solve V.Solve> == V.Solve'
 *
