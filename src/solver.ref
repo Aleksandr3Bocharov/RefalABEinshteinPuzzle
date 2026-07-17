@@ -47,79 +47,70 @@ $FUNC Answer
     e.Table_B (e.Home_B Nationality s.Nationality e.Home_M Fish e.Home_E) e.Table_E = s.Nationality;
 }
 
-* <Solve V.Solve> == V.Solve'
-*
-* V.Solve ::= (S(0..15).Rule (E(1..15).Rule) (V.Table)* '=' V.Extented)+
-* V.Extented ::= V.Table | &Impossible
-* V.Table ::= (V.Home1) (V.Home2) (V.Home3) (V.Home4) (V.Home5)
-* V.Home1 ::= &Home 1 &Color V.Color &Nationality V.Nationality |
-*             &Cigarettes V.Cigarettes &Pet V.Pet &Drink V.Drink
-* V.Home2 ::= &Home 2 &Color V.Color &Nationality V.Nationality |
-*             &Cigarettes V.Cigarettes &Pet V.Pet &Drink V.Drink
-* V.Home3 ::= &Home 3 &Color V.Color &Nationality V.Nationality |
-*             &Cigarettes V.Cigarettes &Pet V.Pet &Drink V.Drink
-* V.Home4 ::= &Home 4 &Color V.Color &Nationality V.Nationality |
-*             &Cigarettes V.Cigarettes &Pet V.Pet &Drink V.Drink
-* V.Home5 ::= &Home 5 &Color V.Color &Nationality V.Nationality |
-*             &Cigarettes V.Cigarettes &Pet V.Pet &Drink V.Drink
-* V.Color ::= S.Color | '???'
-* V.Nationality ::= S.Nationality | '???'
-* V.Cigarettes ::= S.Cigarettes | '???'
-* V.Pet ::= &Cat | &Horse | &Bird | &Dog | '???'
-* V.Drink ::= S.Drink | '???'
-* V.Solve' ::= (S(0..15).Rule (E(1..15).Rule) (V.Table)* '=' V.Extented)+
-*              (16 '=' V.Table')
-* V.Table' ::= (V.Home1') (V.Home2') (V.Home3') (V.Home4') (V.Home5')
-* V.Home1' ::= &Home 1 &Color S.Color &Nationality S.Nationality |
-*              &Cigarettes S.Cigarettes &Pet S.Pet &Drink S.Drink
-* V.Home2' ::= &Home/ 2 &Color S.Color &Nationality S.Nationality |
-*              &Cigarettes S.Cigarettes &Pet S.Pet &Drink S.Drink
-* V.Home3' ::= &Home 3 &Color S.Color &Nationality S.Nationality |
-*              &Cigarettes S.Cigarettes &Pet S.Pet &Drink S.Drink
-* V.Home4' ::= &Home 4 &Color S.Color &Nationality S.Nationality |
-*              &Cigarettes S.Cigarettes &Pet S.Pet &Drink S.Drink
-* V.Home5' ::= &Home 5 &Color S.Color &Nationality S.Nationality |
-*              &Cigarettes S.Cigarettes &Pet S.Pet &Drink S.Drink
-* S.Color ::= &Yellow | &Blue | &Red | &Green | &White
-* S.Nationality ::= &Norwegian | &Dane | &Englishman | &German | &Swede
-* S.Cigarettes ::= &Dunhill | &Rothmans | &PallMall | &Marlboro | &Winfield
-* S.Pet ::= &Cat | &Horse | &Bird | &Dog | &Fish
-* S.Drink ::= &Water | &Tea | &Milk | &Coffee | &Beer
-Solve
-* Возврат к предыдущему правилу
-    E.Solve_B (E._ '=' E.Table) (S.Rule W.Rest_Rules '=' &Impossible) +
-        = <Br &Steps_Back '=' <P1 <Dg &Steps_Back>>> +
-        <Solve E.Solve_B (E._ '=' &Impossible)>
-* Переход к следующему применению правила
-    E.Solve_B (S.Rule W.Rest_Rules (E.Table) E.Tables '=' &Impossible) +
-        = <Br &Steps '=' <P1 <Dg &Steps>>> +
-        <Br &Steps_Back '=' <P1 <Dg &Steps_Back>>> +
-        <Solve E.Solve_B (S.Rule W.Rest_Rules E.Tables '=' E.Table)>
-* Решение найдено
-    E.Solve_B (S.Rule () E.Tables '=' E.Table) +
-        = <Br &Steps '=' <P1 <Dg &Steps>>> +
-        <Br &Steps_Back '=' <P1 <Dg &Steps_Back>>> +
-        E.Solve_B (S.Rule () E.Tables '=' E.Table) +
-        (16 '=' <Apply_Rule <Rule 16> E.Table>)
-* Переход к следующему правилу  
-    E.Solve_B (S.Rule W.Rest_Rules E.Tables '=' E.Table) +
-        = <Solve_Aux1 E.Solve_B (S.Rule W.Rest_Rules E.Tables '=' E.Table) +
-            <Find_Min_Rule W.Rest_Rules E.Table>>
+/*
+    <Solve v.Solve> == v.Solve'
 
-Solve_Aux1
-    E.Solve_B (E._ '=' E.Table) S.Min +
-        = <Apply_Rule <Rule S.Min> E.Table> +
-        <Solve_Aux2 E.Solve_B (E._ '=' E.Table) S.Min <Dg &Rule_Tables>> 
+    v.Solve ::= (s(0..15).Rule (e(1..15).Rule) (v.Table)* '=' v.Extented)+
+    v.Extented ::= v.Table | Impossible
+    v.Table ::= (v.Home1) (v.Home2) (v.Home3) (v.Home4) (v.Home5)
+    v.Home1 ::= Home 1 Color v.Color Nationality v.Nationality Cigarettes v.Cigarettes Pet v.Pet Drink v.Drink
+    v.Home2 ::= Home 2 Color v.Color Nationality v.Nationality Cigarettes v.Cigarettes Pet v.Pet Drink v.Drink
+    v.Home3 ::= Home 3 Color v.Color Nationality v.Nationality Cigarettes v.Cigarettes Pet v.Pet Drink v.Drink
+    v.Home4 ::= Home 4 Color v.Color Nationality v.Nationality Cigarettes v.Cigarettes Pet v.Pet Drink v.Drink
+    v.Home5 ::= Home 5 Color v.Color Nationality v.Nationality Cigarettes v.Cigarettes Pet v.Pet Drink v.Drink
+    v.Color ::= s.Color | '???'
+    v.Nationality ::= s.Nationality | '???'
+    v.Cigarettes ::= s.Cigarettes | '???'
+    v.Pet ::= Cat | Horse | Bird | Dog | '???'
+    v.Drink ::= s.Drink | '???'
+    v.Solve' ::= (s(0..15).Rule (e(1..15).Rule) (v.Table)* '=' v.Extented)+ (16 '=' v.Table')
+    v.Table' ::= (v.Home1') (v.Home2') (v.Home3') (v.Home4') (v.Home5')
+    v.Home1' ::= Home 1 Color s.Color Nationality s.Nationality Cigarettes s.Cigarettes Pet s.Pet Drink s.Drink
+    v.Home2' ::= Home 2 Color s.Color Nationality s.Nationality Cigarettes s.Cigarettes Pet s.Pet Drink s.Drink
+    v.Home3' ::= Home 3 Color s.Color Nationality s.Nationality Cigarettes s.Cigarettes Pet s.Pet Drink s.Drink
+    v.Home4' ::= Home 4 Color s.Color Nationality s.Nationality Cigarettes s.Cigarettes Pet s.Pet Drink s.Drink
+    v.Home5' ::= Home 5 Color s.Color Nationality s.Nationality Cigarettes s.Cigarettes Pet s.Pet Drink s.Drink
+    s.Color ::= Yellow | Blue | Red | Green | White
+    s.Nationality ::= Norwegian | Dane | Englishman | German | Swede
+    s.Cigarettes ::= Dunhill | Rothmans | PallMall | Marlboro | Winfield
+    s.Pet ::= Cat | Horse | Bird | Dog | Fish
+    s.Drink ::= Water | Tea | Milk | Coffee | Beer
+*/
+$FUNC Solve
+{
+// Возврат к предыдущему правилу
+    e.Solve_B (e._ '=' e.Table) (s.Rule w.Rest_Rules '=' Impossible) =
+        <Br Steps_Back '=' <P1 <Dg Steps_Back>>>
+        <Solve e.Solve_B (e._ '=' Impossible)>;
+// Переход к следующему применению правила
+    e.Solve_B (s.Rule w.Rest_Rules (e.Table) e.Tables '=' Impossible) = 
+        <Br Steps '=' <P1 <Dg Steps>>>
+        <Br Steps_Back '=' <P1 <Dg Steps_Back>>>
+        <Solve e.Solve_B (s.Rule w.Rest_Rules e.Tables '=' e.Table)>;
+// Решение найдено
+    e.Solve_B (s.Rule () e.Tables '=' e.Table) =
+        <Br Steps '=' <P1 <Dg Steps>>>
+        <Br Steps_Back '=' <P1 <Dg Steps_Back>>> 
+        e.Solve_B (s.Rule () e.Tables '=' e.Table) (16 '=' <Apply_Rule <Rule 16> e.Table>);
+// Переход к следующему правилу  
+    e.Solve_B (s.Rule w.Rest_Rules e.Tables '=' e.Table) = <Solve_Aux1 e.Solve_B (s.Rule w.Rest_Rules e.Tables '=' e.Table) <Find_Min_Rule w.Rest_Rules e.Table>>;
+}
 
-Solve_Aux2
-    E.Solve_B (S.Rule (E.Rules_B S.Min E.Rules_E) E.Tables '=' E.Table) +
-    S.Min (E.Next_Table) E.Rest_Tables +
-        = <Br &Steps '=' <P1 <Dg &Steps>>> +
-        <Br &Steps_Back '=' <P1 <Dg &Steps_Back>>> +
-        <Solve E.Solve_B (S.Rule (E.Rules_B S.Min E.Rules_E) E.Tables '=' E.Table) +
-            (S.Min (E.Rules_B E.Rules_E) E.Rest_Tables '=' E.Next_Table)>
-    E.Solve_B (E._ '=' E.Table) S.Min +
-        = <Solve E.Solve_B (E._ '=' &Impossible)>
+$FUNC Solve_Aux1
+{
+    e.Solve_B (e._ '=' e.Table) s.Min =
+        <Apply_Rule <Rule s.Min> e.Table>
+        <Solve_Aux2 e.Solve_B (e._ '=' e.Table) s.Min <Dg Rule_Tables>>; 
+}
+
+$FUNC Solve_Aux2
+{
+    e.Solve_B (s.Rule (e.Rules_B s.Min e.Rules_E) e.Tables '=' e.Table) s.Min (e.Next_Table) e.Rest_Tables =
+        <Br Steps '=' <P1 <Dg Steps>>> 
+        <Br Steps_Back '=' <P1 <Dg Steps_Back>>>
+        <Solve e.Solve_B (s.Rule (e.Rules_B s.Min e.Rules_E) e.Tables '=' e.Table) (s.Min (e.Rules_B e.Rules_E) e.Rest_Tables '=' e.Next_Table)>;
+    e.Solve_B (e._ '=' e.Table) s.Min = <Solve e.Solve_B (e._ '=' Impossible)>;
+}
 
 * <Find_Min_Rule (V(1..15).Rule) V.Table> == S(1..15).Min
 *
