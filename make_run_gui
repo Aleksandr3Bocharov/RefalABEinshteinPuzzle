@@ -1,18 +1,18 @@
 #!/bin/sh 
 
-# Copyright 2025 Aleksandr Bocharov
+# Copyright 2026 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2025-10-17
+# 2026-07-17
 # https://github.com/Aleksandr3Bocharov/refalabeinsteinpuzzle
 
 RAYLIBCFLAGS="-Wall -O2"
 RAYLIBLFLAGS="-lraylib -lm"
 
 mkdir -p bin
-$REFALABBIN/refalabc src/refalabeinsteinpuzzle_gui -a,"-o src/refalabeinsteinpuzzle_gui.o" > refalabeinsteinpuzzle_gui.log
-$REFALABBIN/refalabc src/solver -a,"-o src/solver.o" >> refalabeinsteinpuzzle_gui.log
-clang $REFALABCFLAGS -DPOSIX -I$REFALABINCLUDE -c src/refalabeinsteinpuzzlec_gui.c -o src/refalabeinsteinpuzzlec_gui.o >> refalabeinsteinpuzzle_gui.log
+$REFALABBIN/refalabc src/refalabeinsteinpuzzle_gui -l,"-o src/refalabeinsteinpuzzle_gui.o -O2 -Wno-override-module" > refalabeinsteinpuzzle_gui.log
+$REFALABBIN/refalabc src/solver -l,"-o src/solver.o -O2 -Wno-override-module" >> refalabeinsteinpuzzle_gui.log
+clang $REFALABCFLAGS -I$REFALABINCLUDE -c src/refalabeinsteinpuzzlec_gui.c -o src/refalabeinsteinpuzzlec_gui.o >> refalabeinsteinpuzzle_gui.log
 clang $RAYLIBCFLAGS -c src/gui.c -o src/gui.o >> refalabeinsteinpuzzle_gui.log
-clang -o bin/refalabeinsteinpuzzle_gui src/refalabeinsteinpuzzle_gui.o src/refalabeinsteinpuzzlec_gui.o src/solver.o $REFALABLIB/obj/mainrf.o -L$REFALABLIB -lrefalab src/gui.o $RAYLIBLFLAGS >> refalabeinsteinpuzzle_gui.log
+clang -o bin/refalabeinsteinpuzzle_gui src/refalabeinsteinpuzzle_gui.o src/refalabeinsteinpuzzlec_gui.o src/solver.o $REFALABLFLAGS src/gui.o $RAYLIBLFLAGS >> refalabeinsteinpuzzle_gui.log
 bin/refalabeinsteinpuzzle_gui
