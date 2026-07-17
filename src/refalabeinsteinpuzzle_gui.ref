@@ -41,53 +41,55 @@
 // 15. Курильщик Marlboro живет по соседству с человеком, который пьет воду.
 //============================================================================================================================
 
-RefalABEinsteinPuzzle_GUI +
-    START
+$START RefalABEinsteinPuzzle_GUI;
 
-    ENTRY Go
-    EXTRN Answer, Solve
-    EXTRN Map_Accumulator, Del_FirstW, P1, Symb, Br, Dg
-    EXTRN True, False
-    EXTRN GUI_Init, GUI_Close, Dialog_Info, Dialog_Is_Exit
-    EXTRN View_Answer, View_Rule, View_Table, View_Show
-    EXTRN Steps, Steps_Back, Home
-    EXTRN Color, Yellow, Blue, Red, Green, White
-    EXTRN Nationality, Norwegian, Dane, Englishman, German, Swede
-    EXTRN Cigarettes, Dunhill, Rothmans, PallMall, Marlboro, Winfield
-    EXTRN Pet, Cat, Horse, Bird, Dog, Fish
-    EXTRN Drink, Water, Tea, Milk, Coffee, Beer
+$ENTRY Go;
+$EXTERN Answer, Solve;
+$EXTERN Map_Accumulator, Del_FirstW, P1, Symb, Br, Dg;
+$EXTERN True, False;
+$EXTERN GUI_Init, GUI_Close, Dialog_Info, Dialog_Is_Exit;
+$EXTERN View_Answer, View_Rule, View_Table, View_Show;
+$EXTERN Steps, Steps_Back, Home;
+$EXTERN Color, Yellow, Blue, Red, Green, White;
+$EXTERN Nationality, Norwegian, Dane, Englishman, German, Swede;
+$EXTERN Cigarettes, Dunhill, Rothmans, PallMall, Marlboro, Winfield;
+$EXTERN Pet, Cat, Horse, Bird, Dog, Fish;
+$EXTERN Drink, Water, Tea, Milk, Coffee, Beer;
 
-    IMPL
+$FUNC Go
+{
+    = 
+        <GUI_Init>
+        <Is_Info <Dialog_Info>>
+        <GUI_Close>;
+}
 
-Go      = <GUI_Init> <Is_Info <Dialog_Info>> <GUI_Close>
+$FUNC Is_Info
+{
+    False = <Is_Info_Aux <Dialog_Is_Exit>>;
+    True = 
+        <Br Steps '=' 0>
+        <Br Steps_Back '=' 0> 
+        <Solve_Out <Solve (0 (1 2 3 4 5 6 7 8 9 10 11 12 13 14 15) '=' 
+            (Home 1 Color '???' Nationality '???' Cigarettes '???' Pet '???' Drink '???') 
+            (Home 2 Color '???' Nationality '???' Cigarettes '???' Pet '???' Drink '???') 
+            (Home 3 Color '???' Nationality '???' Cigarettes '???' Pet '???' Drink '???') 
+            (Home 4 Color '???' Nationality '???' Cigarettes '???' Pet '???' Drink '???') 
+            (Home 5 Color '???' Nationality '???' Cigarettes '???' Pet '???' Drink '???'))>>;
+}
 
-Is_Info
-    &False +
-        = <Is_Info_Aux <Dialog_Is_Exit>>
-    &True +
-        = <Br &Steps '=' 0> <Br &Steps_Back '=' 0> +
-        <Solve_Out <Solve (0 (1 2 3 4 5 6 7 8 9 10 11 12 13 14 15) '=' +
-            (&Home 1 &Color '???' &Nationality '???' +
-            &Cigarettes '???' &Pet '???' &Drink '???') +
-            (&Home 2 &Color '???' &Nationality '???' +
-            &Cigarettes '???' &Pet '???' &Drink '???') +
-            (&Home 3 &Color '???' &Nationality '???' +
-            &Cigarettes '???' &Pet '???' &Drink '???') +
-            (&Home 4 &Color '???' &Nationality '???' +
-            &Cigarettes '???' &Pet '???' &Drink '???') +
-            (&Home 5 &Color '???' &Nationality '???' +
-            &Cigarettes '???' &Pet '???' &Drink '???'))>>
+$FUNC Is_Info_Aux
+{
+    True = ;
+    False = <Is_Info <Dialog_Info>>;
+}
 
-Is_Info_Aux
-    &True +
-        =
-    &False +
-        = <Is_Info <Dialog_Info>>
-
-Solve_Out
-    E.Solve_B (E._ '=' E.Table) +
-        = <View_Answer <Dg &Steps> <Dg &Steps_Back> <Answer_Text <Answer E.Table>>> +
-        <Do_Solve_Out E.Solve_B ((E._ '=' E.Table))>
+$FUNC Solve_Out
+{
+    e.Solve_B (e._ '=' e.Table) =
+        <View_Answer <Dg Steps> <Dg Steps_Back> <Answer_Text <Answer e.Table>>>
+        <Do_Solve_Out e.Solve_B ((e._ '=' e.Table))>;
+}
 
 $FUNC Answer_Text
 {
@@ -98,33 +100,32 @@ $FUNC Answer_Text
     Swede = 'Швед';
 }
 
-Do_Solve_Out
-    (W.Solve_B) E.Solve_E +
-        = <Do_Solve_Out_Aux W.Solve_B 0> +
-        <Result_View (W.Solve_B) E.Solve_E <View_Show>>
-    E.Solve_B (W.Solve_E) +
-        = <Do_Solve_Out_Aux W.Solve_E 2> +
-        <Result_View E.Solve_B (W.Solve_E) <View_Show>>
-    E.Solve_B (W.Solve_M) E.Solve_E +
-        = <Do_Solve_Out_Aux W.Solve_M 1> +
-        <Result_View E.Solve_B (W.Solve_M) E.Solve_E <View_Show>>
+$FUNC Do_Solve_Out
+{
+    (w.Solve_B) e.Solve_E =
+        <Do_Solve_Out_Aux w.Solve_B 0> 
+        <Result_View (w.Solve_B) e.Solve_E <View_Show>>;
+    e.Solve_B (w.Solve_E) =
+        <Do_Solve_Out_Aux w.Solve_E 2>
+        <Result_View e.Solve_B (w.Solve_E) <View_Show>>;
+    e.Solve_B (w.Solve_M) e.Solve_E =
+        <Do_Solve_Out_Aux w.Solve_M 1> +
+        <Result_View e.Solve_B (w.Solve_M) e.Solve_E <View_Show>>;
+}
 
-Do_Solve_Out_Aux
-    (S.Rule E._ '=' V.Table) S.Position +
-        = <View_Rule S.Position S.Rule <Rule_Text S.Rule>> +
-        <Del_FirstW <Map_Accumulator &Do_Map_Row 1 V.Table>>
+$FUNC Do_Solve_Out_Aux
+{
+    (s.Rule e._ '=' v.Table) s.Position =
+        <View_Rule s.Position s.Rule <Rule_Text s.Rule>>
+        <Del_FirstW <Map_Accumulator Do_Map_Row 1 v.Table>>;
+}
 
-Do_Map_Row
-    S.Row (&Home S.Home &Color E.Color &Nationality E.Nationality +
-    &Cigarettes E.Cigarettes &Pet E.Pet &Drink E.Drink) +
-        = <P1 S.Row> +
-        <Del_FirstW <Map_Accumulator &Do_Map_Col (S.Row 0) +
-            (<Symb S.Home>) +
-            (<Object_Text E.Color>) +
-            (<Object_Text E.Nationality>) +
-            (<Object_Text E.Cigarettes>) +
-            (<Object_Text E.Pet>) +
-            (<Object_Text E.Drink>)>>
+$FUNC Do_Map_Row
+{
+    s.Row (Home s.Home Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Pet e.Pet Drink e.Drink) = 
+        <P1 s.Row>
+        <Del_FirstW <Map_Accumulator Do_Map_Col (s.Row 0) (<Symb s.Home>) (<Object_Text e.Color>) (<Object_Text e.Nationality>) (<Object_Text e.Cigarettes>) (<Object_Text e.Pet>) (<Object_Text e.Drink>)>>;
+}
 
 Do_Map_Col
     (S.Row S.Column) (E.Object_Text) +
@@ -188,76 +189,49 @@ $FUNC Rule_Text
                     'Кошка' | 'Конь' | 'Птица' | 'Собака' | 'Рыба' |
                     'Вода' | 'Чай' | 'Молоко' | 'Кофе' | 'Пиво'
 */
-Object_Text
-    '???' +
-        = '???'
-    &Yellow +
-        = 'Желтый'
-    &Blue +
-        = 'Голубой'
-    &Red +
-        = 'Красный'
-    &Green +
-        = 'Зеленый'
-    &White +
-        = 'Белый'     
-    &Norwegian +
-        = 'Норвежец' 
-    &Dane +
-        = 'Датчанин'  
-    &Englishman +
-        = 'Англичанин'
-    &German +
-        = 'Немец'
-    &Swede +
-        = 'Швед'   
-    &Dunhill +
-        = 'Dunhill'
-    &Rothmans +
-        = 'Rothmans'
-    &PallMall +
-        = 'Pall Mall'
-    &Marlboro +
-        = 'Marlboro' 
-    &Winfield +
-        = 'Winfield'  
-    &Cat +
-        = 'Кошка'
-    &Horse +
-        = 'Конь'
-    &Bird +
-        = 'Птица'
-    &Dog +
-        = 'Собака'
-    &Fish +
-        = 'Рыба'
-    &Water +
-        = 'Вода'
-    &Tea +
-        = 'Чай'
-    &Milk +
-        = 'Молоко'
-    &Coffee +
-        = 'Кофе'
-    &Beer +
-        = 'Пиво'
+$FUNC Object_Text
+{
+    '???' = '???';
+    Yellow = 'Желтый';
+    Blue = 'Голубой';
+    Red = 'Красный';
+    Green = 'Зеленый';
+    White = 'Белый';     
+    Norwegian = 'Норвежец'; 
+    Dane = 'Датчанин';  
+    Englishman = 'Англичанин';
+    German = 'Немец';
+    Swede = 'Швед';   
+    Dunhill = 'Dunhill';
+    Rothmans = 'Rothmans';
+    PallMall = 'Pall Mall';
+    Marlboro = 'Marlboro'; 
+    Winfield = 'Winfield';  
+    Cat = 'Кошка';
+    Horse = 'Конь';
+    Bird = 'Птица';
+    Dog = 'Собака';
+    Fish = 'Рыба';
+    Water = 'Вода';
+    Tea = 'Чай';
+    Milk = 'Молоко';
+    Coffee = 'Кофе';
+    Beer = 'Пиво';
+}
 
-Result_View
-    E._ 'Q' +
-        = <Result_View_Aux E._ <Dialog_Is_Exit>>
-    W.Solve_B E.Solve_M (W.Solve_C) E.Solve_E 'B' +
-        = <Do_Solve_Out (W.Solve_B) E.Solve_M W.Solve_C E.Solve_E>
-    E.Solve_B W.Solve_P (W.Solve_C) E.Solve_E 'P' +
-        = <Do_Solve_Out E.Solve_B (W.Solve_P) W.Solve_C E.Solve_E>
-    E.Solve_B (W.Solve_C) W.Solve_N E.Solve_E 'N' +
-        = <Do_Solve_Out E.Solve_B W.Solve_C (W.Solve_N) E.Solve_E>
-    E.Solve_B (W.Solve_C) E.Solve_M W.Solve_E 'E' +
-        = <Do_Solve_Out E.Solve_B W.Solve_C E.Solve_M (W.Solve_E)>
+$FUNC Result_View
+{
+    e._ 'Q' = <Result_View_Aux e._ <Dialog_Is_Exit>>;
+    w.Solve_B e.Solve_M (w.Solve_C) e.Solve_E 'B' = <Do_Solve_Out (w.Solve_B) e.Solve_M w.Solve_C e.Solve_E>;
+    e.Solve_B w.Solve_P (w.Solve_C) e.Solve_E 'P' = <Do_Solve_Out e.Solve_B (w.Solve_P) w.Solve_C e.Solve_E>;
+    e.Solve_B (w.Solve_C) w.Solve_N e.Solve_E 'N' = <Do_Solve_Out e.Solve_B w.Solve_C (w.Solve_N) e.Solve_E>;
+    e.Solve_B (w.Solve_C) e.Solve_M w.Solve_E 'E' = <Do_Solve_Out e.Solve_B w.Solve_C e.Solve_M (w.Solve_E)>;
+}
 
-Result_View_Aux
-    E._ &True +
-        =
-    E._ &False +
-        = <Result_View E._ <View_Show>>
+$FUNC Result_View_Aux
+{
+    e._ True = ;
+    e._ False = <Result_View e._ <View_Show>>;
+}
 
-    END
+$END.
