@@ -124,12 +124,13 @@ $FUNC Do_Map_Row
 {
     s.Row (Home s.Home Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Pet e.Pet Drink e.Drink) = 
         <P1 s.Row>
-        <Del_FirstW <Map_Accumulator Do_Map_Col (s.Row 0) (<Symb s.Home>) (<Object_Text e.Color>) (<Object_Text e.Nationality>) (<Object_Text e.Cigarettes>) (<Object_Text e.Pet>) (<Object_Text e.Drink>)>>;
+        <Del_FirstW <Map_Accumulator Do_Map_Col (s.Row 0) (<Symb s.Home>) (<Object_Text e.Color>) (<Object_Text e.Nationality>) (<Object_Text e.Cigarettes>) (<Object_Text e.Pet>) (<Object_Text .Drink>)>>;
 }
 
-Do_Map_Col
-    (S.Row S.Column) (E.Object_Text) +
-        = (S.Row <P1 S.Column>) <View_Table S.Row S.Column E.Object_Text>
+$FUNC Do_Map_Col
+{
+    (s.Row s.Column) (e.Object_Text) = (s.Row <P1 s.Column>) <View_Table s.Row s.Column e.Object_Text>;
+}
 
 /* 
     <Rule_Text s(0..16).Rule> == v.Rule_txt
