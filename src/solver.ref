@@ -112,202 +112,158 @@ $FUNC Solve_Aux2
     e.Solve_B (e._ '=' e.Table) s.Min = <Solve e.Solve_B (e._ '=' Impossible)>;
 }
 
-* <Find_Min_Rule (V(1..15).Rule) V.Table> == S(1..15).Min
-*
-* V.Table ::= (V.Home1) (V.Home2) (V.Home3) (V.Home4) (V.Home5)
-* V.Home1 ::= &Home 1 &Color V.Color &Nationality V.Nationality |
-*             &Cigarettes V.Cigarettes &Pet V.Pet &Drink V.Drink
-* V.Home2 ::= &Home 2 &Color V.Color &Nationality V.Nationality |
-*             &Cigarettes V.Cigarettes &Pet V.Pet &Drink V.Drink
-* V.Home3 ::= &Home 3 &Color V.Color &Nationality V.Nationality |
-*             &Cigarettes V.Cigarettes &Pet V.Pet &Drink V.Drink
-* V.Home4 ::= &Home 4 &Color V.Color &Nationality V.Nationality |
-*             &Cigarettes V.Cigarettes &Pet V.Pet &Drink V.Drink
-* V.Home5 ::= &Home 5 &Color V.Color &Nationality V.Nationality |
-*             &Cigarettes V.Cigarettes &Pet V.Pet &Drink V.Drink
-* V.Color ::= &Yellow | &Blue | &Red | &Green | &White | '???'
-* V.Nationality ::= &Norwegian | &Dane | &Englishman | &German | &Swede | '???'
-* V.Cigarettes ::= &Dunhill | &Rothmans | &PallMall | &Marlboro | &Winfield | '???'
-* V.Pet ::= &Cat | &Horse | &Bird | &Dog | '???'
-* V.Drink ::= &Water | &Tea | &Milk | &Coffee | &Beer | '???'
-Find_Min_Rule
-    (S.Min) E._ +
-        = S.Min
-    (S.Min E.Rest_Rules) E.Table +
-        = <Apply_Rule <Rule S.Min> E.Table> +
-        <Find_Min_Rule_Aux (<LengW <Dg &Rule_Tables>> S.Min) (E.Rest_Rules) E.Table>
+/*
+    <Find_Min_Rule (v(1..15).Rule) v.Table> == s(1..15).Min
 
-Find_Min_Rule_Aux
-    (0 S.Min) E._ +
-        = S.Min
-    (E._ S.Min) () E.Table +
-        = S.Min
-    (S.Len E._ S.Min) (S.Rule E.Rest_Rules) E.Table +
-        = <Apply_Rule <Rule S.Rule> E.Table> +
-        <Find_Min_Rule_Aux <Min_Rule S.Len S.Min <LengW <Dg &Rule_Tables>> S.Rule> +
-            (E.Rest_Rules) E.Table>
+    v.Table ::= (v.Home1) (v.Home2) (v.Home3) (v.Home4) (v.Home5)
+    v.Home1 ::= Home 1 Color v.Color Nationality v.Nationality Cigarettes v.Cigarettes Pet v.Pet Drink v.Drink
+    v.Home2 ::= Home 2 Color v.Color Nationality v.Nationality Cigarettes v.Cigarettes Pet v.Pet Drink v.Drink
+    v.Home3 ::= Home 3 Color v.Color Nationality v.Nationality Cigarettes v.Cigarettes Pet v.Pet Drink v.Drink
+    v.Home4 ::= Home 4 Color v.Color Nationality v.Nationality Cigarettes v.Cigarettes Pet v.Pet Drink v.Drink
+    v.Home5 ::= Home 5 Color v.Color Nationality v.Nationality Cigarettes v.Cigarettes Pet v.Pet Drink v.Drink
+    v.Color ::= Yellow | Blue | Red | Green | White | '???'
+    v.Nationality ::= Norwegian | Dane | Englishman | German | Swede | '???'
+    v.Cigarettes ::= Dunhill | Rothmans | PallMall | Marlboro | Winfield | '???'
+    v.Pet ::= Cat | Horse | Bird | Dog | '???'
+    v.Drink ::= Water | Tea | Milk | Coffee | Beer | '???'
+*/
+$FUNC Find_Min_Rule
+{
+    (s.Min) e._ = s.Min;
+    (s.Min e.Rest_Rules) e.Table =
+        <Apply_Rule <Rule s.Min> e.Table> 
+        <Find_Min_Rule_Aux (<LengW <Dg Rule_Tables>> s.Min) (e.Rest_Rules) e.Table>;
+}
 
-Min_Rule
-    S.Len S.Min S.New_Len E._ S.Rule +
-        = <MinW (S.Len S.Min) (S.New_Len S.Rule)>
+$FUNC Find_Min_Rule_Aux
+{
+    (0 s.Min) e._ = s.Min;
+    (e._ s.Min) () e.Table = s.Min;
+    (s.Len e._ s.Min) (s.Rule e.Rest_Rules) e.Table =
+        <Apply_Rule <Rule s.Rule> e.Table>
+        <Find_Min_Rule_Aux <Min_Rule s.Len s.Min <LengW <Dg Rule_Tables>> s.Rule> (e.Rest_Rules) e.Table>;
+}
 
-* <Rule S(1..16).Rule> == S(&Member &Left &Nextto).Predicate V.Object V.Object | &Fish
-*
-* V.Object ::= &Home S(1 3).Home | &Color S.Color | &Nationality S.Nationality | 
-*              &Cigarettes S.Cigarettes | &Pet S.Pet | &Drink S.Drink 
-* S.Color ::= &Yellow | &Blue | &Red | &Green | &White
-* S.Nationality ::= &Norwegian | &Dane | &Englishman | &German | &Swede
-* S.Cigarettes ::= &Dunhill | &Rothmans | &PallMall | &Marlboro | &Winfield
-* S.Pet ::= &Cat | &Horse | &Bird | &Dog
-* S.Drink ::= &Water | &Tea | &Milk | &Coffee | &Beer
-Rule
-* 1. Англичанин живет в красном доме.
-    1   = &Member &Color &Red &Nationality &Englishman
-* 2. У шведа есть собака. 
-    2   = &Member &Nationality &Swede &Pet &Dog
-* 3. Датчанин пьет чай.
-    3   = &Member &Nationality &Dane &Drink &Tea
-* 4. Зеленый дом стоит слева от белого. 
-    4   = &Left &Color &Green &Color &White
-* 5. Обитатель зеленого дома пьет кофе. 
-    5   = &Member &Color &Green &Drink &Coffee
-* 6. Человек, который курит Pall Mall, держит птицу. 
-    6   = &Member &Cigarettes &PallMall &Pet &Bird
-* 7. Обитатель среднего дома пьет молоко. 
-    7   = &Member &Home 3 &Drink &Milk
-* 8. Обитатель желтого дома курит Dunhill. 
-    8   = &Member &Color &Yellow &Cigarettes &Dunhill
-* 9. Норвежец живет в первом доме. 
-    9   = &Member &Home 1 &Nationality &Norwegian
-* 10. Курильщик Marlboro живет возле того,
-*     у кого есть кошка. 
-    10  = &Nextto &Cigarettes &Marlboro &Pet &Cat
-* 11. Человек, у которого есть конь,
-*     живет возле того, кто курит Dunhill. 
-    11  = &Nextto &Pet &Horse &Cigarettes &Dunhill
-* 12. Курильщик Winfield пьет пиво. 
-    12  = &Member &Cigarettes &Winfield &Drink &Beer
-* 13. Норвежец живет возле голубого дома. 
-    13  = &Nextto &Nationality &Norwegian &Color &Blue
-* 14. Немец курит Rothmans. 
-    14  = &Member &Nationality &German &Cigarettes &Rothmans
-* 15. Курильщик Marlboro живет по соседству
-*     с человеком, который пьет воду. 
-    15  = &Nextto &Cigarettes &Marlboro &Drink &Water
-* 16. Рыба - пятое животное.
-    16  = &Fish
+$FUNC Min_Rule
+{
+    s.Len s.Min s.New_Len e._ s.Rule = <MinW (s.Len s.Min) (s.New_Len s.Rule)>;
+}
 
-* <Apply_Rule V.Rule V.Table> == | V.Table'
-*
-* V.Rule ::= S(&Member &Left &Nextto).Predicate V.Object V.Object | &Fish
-* V.Object ::= &Home S(1 3).Home | &Color S.Color | &Nationality S.Nationality | 
-*              &Cigarettes S.Cigarettes | &Pet S.Pet | &Drink S.Drink 
-* S.Color ::= &Yellow | &Blue | &Red | &Green | &White
-* S.Nationality ::= &Norwegian | &Dane | &Englishman | &German | &Swede
-* S.Cigarettes ::= &Dunhill | &Rothmans | &PallMall | &Marlboro | &Winfield
-* S.Pet ::= &Cat | &Horse | &Bird | &Dog
-* S.Drink ::= &Water | &Tea | &Milk | &Coffee | &Beer
-* V.Table ::= (V.Home1) (V.Home2) (V.Home3) (V.Home4) (V.Home5)
-* V.Home1 ::= &Home 1 &Color V.Color &Nationality V.Nationality |
-*             &Cigarettes V.Cigarettes &Pet V.Pet &Drink V.Drink
-* V.Home2 ::= &Home 2 &Color V.Color &Nationality V.Nationality |
-*             &Cigarettes V.Cigarettes &Pet V.Pet &Drink V.Drink
-* V.Home3 ::= &Home 3 &Color V.Color &Nationality V.Nationality |
-*             &Cigarettes V.Cigarettes &Pet V.Pet &Drink V.Drink
-* V.Home4 ::= &Home 4 &Color V.Color &Nationality V.Nationality |
-*             &Cigarettes V.Cigarettes &Pet V.Pet &Drink V.Drink
-* V.Home5 ::= &Home 5 &Color V.Color &Nationality V.Nationality |
-*             &Cigarettes V.Cigarettes &Pet V.Pet &Drink V.Drink
-* V.Color ::= S.Color | '???'
-* V.Nationality ::= S.Nationality | '???'
-* V.Cigarettes ::= S.Cigarettes | '???'
-* V.Pet ::= S.Pet | '???'
-* V.Drink ::= S.Drink | '???'
-* V.Table' ::= (V.Home1') (V.Home2') (V.Home3') (V.Home4') (V.Home5')
-* V.Home1' ::= &Home 1 &Color S.Color &Nationality S.Nationality |
-*              &Cigarettes S.Cigarettes &Pet S.Pet' &Drink S.Drink
-* V.Home2' ::= &Home/ 2 &Color S.Color &Nationality S.Nationality |
-*              &Cigarettes S.Cigarettes &Pet S.Pet' &Drink S.Drink
-* V.Home3' ::= &Home 3 &Color S.Color &Nationality S.Nationality |
-*              &Cigarettes S.Cigarettes &Pet S.Pet' &Drink S.Drink
-* V.Home4' ::= &Home 4 &Color S.Color &Nationality S.Nationality |
-*              &Cigarettes S.Cigarettes &Pet S.Pet' &Drink S.Drink
-* V.Home5' ::= &Home 5 &Color S.Color &Nationality S.Nationality |
-*              &Cigarettes S.Cigarettes &Pet S.Pet' &Drink S.Drink
-* S.Pet' ::= S.Pet | &Fish
-Apply_Rule
-* Member - 2 объекта в одном доме
-    &Member S.Category1 S.Object1 S.Category2 S.Object2 +
-    E.Table_B (E.Home_B S.Object1 E.Home_M S.Category2 '???' E.Home_E) E.Table_E +
-        = <Br &Rule_Tables '=' +
-            (E.Table_B (E.Home_B S.Object1 E.Home_M S.Category2 S.Object2 E.Home_E) +
-            E.Table_E)>
-    &Member S.Category1 S.Object1 E._ (E.Home_B S.Object1 E.Home_E) E.Table_E +
-        =
-    &Member S.Category1 S.Object1 S.Category2 S.Object2 +
-    E.Table_B (E.Home_B S.Category1 '???' E.Home_M S.Object2 E.Home_E) E.Table_E +
-        = <Br &Rule_Tables '=' +
-            (E.Table_B (E.Home_B S.Category1 S.Object1 E.Home_M S.Object2 E.Home_E) +
-            E.Table_E)>
-    &Member S.Category1 S.Object1 S.Category2 S.Object2 +
-    E.Table_B (E.Home_B S.Object2 E.Home_E) E.Table_E +
-        = 
-    &Member E._ +
-        = <Apply_Rule_None &Member E._ ()>
-* Left - 1 объект в доме слева дома 2 объекта
-    &Left S.Category1 S.Object1 S.Category2 S.Object2 +
-    E.Table_B (E.HomeL_B S.Object1 E.HomeL_E) +
-    (E.HomeR_B S.Category2 '???' E.HomeR_E) E.Table_E +
-        = <Br &Rule_Tables '=' +
-            (E.Table_B (E.HomeL_B S.Object1 E.HomeL_E) +
-            (E.HomeR_B S.Category2 S.Object2 E.HomeR_E) E.Table_E)>
-    &Left S.Category1 S.Object1 E._ (E.HomeL_B S.Object1 E.HomeL_E) E.Table_E +
-        =
-    &Left S.Category1 S.Object1 S.Category2 S.Object2 +
-    E.Table_B (E.HomeL_B S.Category1 '???' E.HomeL_E) +
-    (E.HomeR_B S.Object2 E.HomeR_E) E.Table_E +
-        = <Br &Rule_Tables '=' +
-            (E.Table_B (E.HomeL_B S.Category1 S.Object1 E.HomeL_E) +
-            (E.HomeR_B S.Object2 E.HomeR_E) E.Table_E)>
-    &Left S.Category1 S.Object1 S.Category2 S.Object2 +
-    E.Table_B (E.HomeR_B S.Object2 E.HomeR_E) E.Table_E +
-        =
-    &Left E._ +
-        = <Apply_Rule_None &Left E._ ()> 
-* Nextto - 2 объекта в соседних домах
-    &Nextto S.Category1 S.Object1 S.Category2 S.Object2 E.Table +
-        = <Apply_Rule &Left S.Category1 S.Object1 S.Category2 S.Object2 E.Table> +
-        <Br &Rule_Tables_Temp '=' <Dg &Rule_Tables>> +
-        <Apply_Rule &Left S.Category2 S.Object2 S.Category1 S.Object1 E.Table> +
-        <Br &Rule_Tables '=' <Dg &Rule_Tables_Temp> <Dg &Rule_Tables>>
-* Fish - рыба - пятое животное 
-    &Fish E.Table_B (E.Home_B &Pet '???' E.Home_E) E.Table_E +
-        = E.Table_B (E.Home_B &Pet &Fish E.Home_E) E.Table_E
+/*
+    <Rule s(1..16).Rule> == s(Member Left Nextto).Predicate v.Object v.Object | Fish
 
-Apply_Rule_None
-* Member - 2 объекта в одном доме
-    &Member S.Category1 S.Object1 S.Category2 S.Object2 +
-    E.Table_B (E.Home_B S.Category1 '???' E.Home_M S.Category2 '???' E.Home_E) +
-    E.Table_E (E.Rest_Table) +
-        = <Br &Rule_Tables '=' <Dg &Rule_Tables> +
-            (E.Rest_Table E.Table_B +
-            (E.Home_B S.Category1 S.Object1 E.Home_M S.Category2 S.Object2 E.Home_E) +
-            E.Table_E)> +
-        <Apply_Rule_None &Member S.Category1 S.Object1 S.Category2 S.Object2 +
-            E.Table_E (E.Rest_Table E.Table_B +
-            (E.Home_B S.Category1 '???' E.Home_M S.Category2 '???' E.Home_E))>
-    &Member E._ +
-        =
-* Left - 1 объект в доме слева дома 2 объекта
-    &Left S.Category1 S.Object1 S.Category2 S.Object2 +
-    E.Table_B (E.HomeL_B S.Category1 '???' E.HomeL_E) +
-    (E.HomeR_B S.Category2 '???' E.HomeR_E) E.Table_E (E.Rest_Table) +
-        = <Br &Rule_Tables '=' <Dg &Rule_Tables> +
-            (E.Rest_Table E.Table_B (E.HomeL_B S.Category1 S.Object1 E.HomeL_E) +
-            (E.HomeR_B S.Category2 S.Object2 E.HomeR_E) E.Table_E)> +
-        <Apply_Rule_None &Left S.Category1 S.Object1 S.Category2 S.Object2 +
-            (E.HomeR_B S.Category2 '???' E.HomeR_E) E.Table_E +
-            (E.Rest_Table E.Table_B (E.HomeL_B S.Category1 '???' E.HomeL_E))>
-    E._ =
+    v.Object ::= Home s(1 3).Home | Color s.Color | Nationality s.Nationality | Cigarettes s.Cigarettes | Pet s.Pet | Drink s.Drink 
+    s.Color ::= Yellow | Blue | Red | Green | White
+    s.Nationality ::= Norwegian | Dane | Englishman | German | Swede
+    s.Cigarettes ::= Dunhill | Rothmans | PallMall | Marlboro | Winfield
+    s.Pet ::= Cat | Horse | Bird | Dog
+    s.Drink ::= Water | Tea | Milk | Coffee | Beer
+*/
+$FUNC Rule
+{
+// 1. Англичанин живет в красном доме.
+    1   = Member Color Red Nationality Englishman;
+// 2. У шведа есть собака. 
+    2   = Member Nationality Swede Pet Dog;
+// 3. Датчанин пьет чай.
+    3   = Member Nationality Dane Drink Tea;
+// 4. Зеленый дом стоит слева от белого. 
+    4   = Left Color Green Color White;
+// 5. Обитатель зеленого дома пьет кофе. 
+    5   = Member Color Green Drink Coffee;
+// 6. Человек, который курит Pall Mall, держит птицу. 
+    6   = Member Cigarettes PallMall Pet Bird;
+// 7. Обитатель среднего дома пьет молоко. 
+    7   = Member Home 3 Drink Milk;
+// 8. Обитатель желтого дома курит Dunhill. 
+    8   = Member Color Yellow Cigarettes Dunhill;
+// 9. Норвежец живет в первом доме. 
+    9   = Member Home 1 Nationality Norwegian;
+// 10. Курильщик Marlboro живет возле того, у кого есть кошка. 
+    10  = Nextto Cigarettes Marlboro Pet Cat;
+// 11. Человек, у которого есть конь, живет возле того, кто курит Dunhill. 
+    11  = Nextto Pet Horse Cigarettes Dunhill;
+// 12. Курильщик Winfield пьет пиво. 
+    12  = Member Cigarettes Winfield Drink Beer;
+// 13. Норвежец живет возле голубого дома. 
+    13  = Nextto Nationality Norwegian Color Blue;
+// 14. Немец курит Rothmans. 
+    14  = Member Nationality German Cigarettes Rothmans;
+// 15. Курильщик Marlboro живет по соседству с человеком, который пьет воду. 
+    15  = Nextto Cigarettes Marlboro Drink Water;
+// 16. Рыба - пятое животное.
+    16  = Fish;
+}
 
-    END
+/*
+    <Apply_Rule v.Rule v.Table> == | v.Table'
+
+    v.Rule ::= s(Member Left Nextto).Predicate v.Object v.Object | Fish
+    v.Object ::= Home s(1 3).Home | Color s.Color | Nationality s.Nationality | Cigarettes s.Cigarettes | Pet s.Pet | Drink s.Drink 
+    s.Color ::= Yellow | Blue | Red | Green | White
+    s.Nationality ::= Norwegian | Dane | Englishman | German | Swede
+    s.Cigarettes ::= Dunhill | Rothmans | PallMall | Marlboro | Winfield
+    s.Pet ::= Cat | Horse | Bird | Dog
+    s.Drink ::= Water | Tea | Milk | Coffee | Beer
+    v.Table ::= (v.Home1) (v.Home2) (v.Home3) (v.Home4) (v.Home5)
+    v.Home1 ::= Home 1 Color v.Color Nationality v.Nationality Cigarettes v.Cigarettes Pet v.Pet Drink v.Drink
+    v.Home2 ::= Home 2 Color v.Color Nationality v.Nationality Cigarettes v.Cigarettes Pet v.Pet Drink v.Drink
+    v.Home3 ::= Home 3 Color v.Color Nationality v.Nationality Cigarettes v.Cigarettes Pet v.Pet Drink v.Drink
+    v.Home4 ::= Home 4 Color v.Color Nationality v.Nationality Cigarettes v.Cigarettes Pet v.Pet Drink v.Drink
+    v.Home5 ::= Home 5 Color v.Color Nationality v.Nationality Cigarettes v.Cigarettes Pet v.Pet Drink v.Drink
+    v.Color ::= s.Color | '???'
+    v.Nationality ::= s.Nationality | '???'
+    v.Cigarettes ::= s.Cigarettes | '???'
+    v.Pet ::= s.Pet | '???'
+    v.Drink ::= s.Drink | '???'
+    v.Table' ::= (v.Home1') (v.Home2') (v.Home3') (v.Home4') (v.Home5')
+    v.Home1' ::= Home 1 Color s.Color Nationality s.Nationality Cigarettes s.Cigarettes Pet s.Pet' Drink s.Drink
+    v.Home2' ::= Home 2 Color s.Color Nationality s.Nationality Cigarettes s.Cigarettes Pet s.Pet' Drink s.Drink
+    v.Home3' ::= Home 3 Color s.Color Nationality s.Nationality Cigarettes s.Cigarettes Pet s.Pet' Drink s.Drink
+    v.Home4' ::= Home 4 Color s.Color Nationality s.Nationality Cigarettes s.Cigarettes Pet s.Pet' Drink s.Drink
+    v.Home5' ::= Home 5 Color s.Color Nationality s.Nationality Cigarettes s.Cigarettes Pet s.Pet' Drink s.Drink
+    s.Pet' ::= s.Pet | Fish
+*/
+$FUNC Apply_Rule
+{
+// Member - 2 объекта в одном доме
+    Member s.Category1 s.Object1 s.Category2 s.Object2 e.Table_B (e.Home_B s.Object1 e.Home_M s.Category2 '???' e.Home_E) e.Table_E =
+        <Br Rule_Tables '=' (e.Table_B (e.Home_B s.Object1 e.Home_M s.Category2 s.Object2 e.Home_E) e.Table_E)>;
+    Member s.Category1 s.Object1 e._ (e.Home_B s.Object1 e.Home_E) e.Table_E = ;
+    Member s.Category1 s.Object1 s.Category2 s.Object2 e.Table_B (e.Home_B s.Category1 '???' e.Home_M s.Object2 e.Home_E) e.Table_E =
+        <Br Rule_Tables '=' (e.Table_B (e.Home_B s.Category1 s.Object1 e.Home_M s.Object2 e.Home_E) e.Table_E)>;
+    Member s.Category1 s.Object1 s.Category2 s.Object2 e.Table_B (e.Home_B s.Object2 e.Home_E) e.Table_E = ;
+    Member e._ = <Apply_Rule_None Member e._ ()>;
+// Left - 1 объект в доме слева дома 2 объекта
+    Left s.Category1 s.Object1 s.Category2 s.Object2 e.Table_B (e.HomeL_B s.Object1 e.HomeL_E) (e.HomeR_B s.Category2 '???' e.HomeR_E) e.Table_E =
+        <Br Rule_Tables '=' (e.Table_B (e.HomeL_B s.Object1 e.HomeL_E) (e.HomeR_B s.Category2 s.Object2 e.HomeR_E) e.Table_E)>;
+    Left s.Category1 s.Object1 e._ (e.HomeL_B s.Object1 e.HomeL_E) e.Table_E = ;
+    Left s.Category1 s.Object1 s.Category2 s.Object2 e.Table_B (e.HomeL_B s.Category1 '???' e.HomeL_E) (e.HomeR_B s.Object2 e.HomeR_E) e.Table_E =\
+        <Br Rule_Tables '=' (e.Table_B (e.HomeL_B s.Category1 s.Object1 e.HomeL_E) (e.HomeR_B s.Object2 e.HomeR_E) e.Table_E)>;
+    Left s.Category1 s.Object1 s.Category2 s.Object2 e.Table_B (e.HomeR_B s.Object2 e.HomeR_E) e.Table_E = ;
+    Left e._ = <Apply_Rule_None Left e._ ()>;
+// Nextto - 2 объекта в соседних домах
+    Nextto s.Category1 s.Object1 s.Category2 s.Object2 e.Table =
+        <Apply_Rule Left s.Category1 s.Object1 s.Category2 s.Object2 e.Table>
+        <Br Rule_Tables_Temp '=' <Dg Rule_Tables>>
+        <Apply_Rule Left s.Category2 s.Object2 s.Category1 s.Object1 e.Table>
+        <Br Rule_Tables '=' <Dg Rule_Tables_Temp> <Dg Rule_Tables>>;
+// Fish - рыба - пятое животное 
+    Fish e.Table_B (e.Home_B Pet '???' e.Home_E) e.Table_E = e.Table_B (e.Home_B Pet Fish e.Home_E) e.Table_E;
+}
+
+$FUNC Apply_Rule_None
+{
+// Member - 2 объекта в одном доме
+    Member s.Category1 s.Object1 s.Category2 s.Object2 e.Table_B (e.Home_B s.Category1 '???' e.Home_M s.Category2 '???' e.Home_E) e.Table_E (e.Rest_Table) =
+        <Br Rule_Tables '=' <Dg Rule_Tables> (e.Rest_Table e.Table_B (e.Home_B s.Category1 s.Object1 e.Home_M s.Category2 s.Object2 e.Home_E) e.Table_E)>
+        <Apply_Rule_None Member s.Category1 s.Object1 s.Category2 s.Object2 e.Table_E (e.Rest_Table e.Table_B (e.Home_B s.Category1 '???' e.Home_M s.Category2 '???' e.Home_E))>;
+    Member e._ = ;
+// Left - 1 объект в доме слева дома 2 объекта
+    Left s.Category1 s.Object1 s.Category2 s.Object2 e.Table_B (e.HomeL_B s.Category1 '???' e.HomeL_E) (e.HomeR_B s.Category2 '???' e.HomeR_E) e.Table_E (e.Rest_Table) =
+        <Br Rule_Tables '=' <Dg Rule_Tables> (e.Rest_Table e.Table_B (e.HomeL_B s.Category1 s.Object1 e.HomeL_E) (e.HomeR_B s.Category2 s.Object2 e.HomeR_E) e.Table_E)>
+        <Apply_Rule_None Left s.Category1 s.Object1 s.Category2 s.Object2 (e.HomeR_B s.Category2 '???' e.HomeR_E) e.Table_E (e.Rest_Table e.Table_B (e.HomeL_B s.Category1 '???' e.HomeL_E))>;
+    e._ = ;
+}
+
+$END.
