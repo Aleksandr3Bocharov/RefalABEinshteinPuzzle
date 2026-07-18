@@ -238,7 +238,7 @@ $FUNC Apply_Rule
     Left s.Category1 s.Object1 s.Category2 s.Object2 e.Table_B (e.HomeL_B s.Object1 e.HomeL_E) (e.HomeR_B s.Category2 '???' e.HomeR_E) e.Table_E =
         <Br Rule_Tables '=' (e.Table_B (e.HomeL_B s.Object1 e.HomeL_E) (e.HomeR_B s.Category2 s.Object2 e.HomeR_E) e.Table_E)>;
     Left s.Category1 s.Object1 e._ (e.HomeL_B s.Object1 e.HomeL_E) e.Table_E = ;
-    Left s.Category1 s.Object1 s.Category2 s.Object2 e.Table_B (e.HomeL_B s.Category1 '???' e.HomeL_E) (e.HomeR_B s.Object2 e.HomeR_E) e.Table_E =\
+    Left s.Category1 s.Object1 s.Category2 s.Object2 e.Table_B (e.HomeL_B s.Category1 '???' e.HomeL_E) (e.HomeR_B s.Object2 e.HomeR_E) e.Table_E =
         <Br Rule_Tables '=' (e.Table_B (e.HomeL_B s.Category1 s.Object1 e.HomeL_E) (e.HomeR_B s.Object2 e.HomeR_E) e.Table_E)>;
     Left s.Category1 s.Object1 s.Category2 s.Object2 e.Table_B (e.HomeR_B s.Object2 e.HomeR_E) e.Table_E = ;
     Left e._ = <Apply_Rule_None Left e._ ()>;

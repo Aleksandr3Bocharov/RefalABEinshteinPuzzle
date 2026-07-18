@@ -109,7 +109,7 @@ $FUNC Do_Solve_Out
         <Do_Solve_Out_Aux w.Solve_E 2>
         <Result_View e.Solve_B (w.Solve_E) <View_Show>>;
     e.Solve_B (w.Solve_M) e.Solve_E =
-        <Do_Solve_Out_Aux w.Solve_M 1> +
+        <Do_Solve_Out_Aux w.Solve_M 1>
         <Result_View e.Solve_B (w.Solve_M) e.Solve_E <View_Show>>;
 }
 
@@ -124,7 +124,7 @@ $FUNC Do_Map_Row
 {
     s.Row (Home s.Home Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Pet e.Pet Drink e.Drink) = 
         <P1 s.Row>
-        <Del_FirstW <Map_Accumulator Do_Map_Col (s.Row 0) (<Symb s.Home>) (<Object_Text e.Color>) (<Object_Text e.Nationality>) (<Object_Text e.Cigarettes>) (<Object_Text e.Pet>) (<Object_Text .Drink>)>>;
+        <Del_FirstW <Map_Accumulator Do_Map_Col (s.Row 0) (<Symb s.Home>) (<Object_Text e.Color>) (<Object_Text e.Nationality>) (<Object_Text e.Cigarettes>) (<Object_Text e.Pet>) (<Object_Text e.Drink>)>>;
 }
 
 $FUNC Do_Map_Col
